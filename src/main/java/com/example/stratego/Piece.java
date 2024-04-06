@@ -37,8 +37,7 @@ public class Piece {
 
     @Override
     public String toString() {
-        return  type +
-                 rank +
-                 color;
+        return  type + " : "+
+                 rank;
     }
 }
