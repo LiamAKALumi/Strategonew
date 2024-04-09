@@ -54,7 +54,7 @@ public class GameView extends Application {
     public void setupButtonHandlers(GameController controller) {
         for (Button[] buttonRow : buttons) {
             for (Button button : buttonRow) {
-                button.setOnAction(event -> controller.handleButtonAction(button.getId()));
+                    button.setOnAction(event -> controller.handleButtonAction(button.getId()));
             }
         }
     }
