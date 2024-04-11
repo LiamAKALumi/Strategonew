@@ -71,11 +71,11 @@ public class GameView extends Application {
             for (int y = 0; y < NUM_CELLS; y++) {
                 Piece piece = board[x][y];
                 if (piece != null) {
-                    buttons[x][y].setText(piece.toString());
+                    buttons[x][y].setText(piece.getType());
                     if (piece.getColor().equals("Red")) {
-                        buttons[x][y].setStyle("-fx-background-color: #ff0000;"); // Red
+                        buttons[x][y].setStyle("-fx-background-color: #ff0000;-fx-text-fill: black;"); // Red
                     } else if (piece.getColor().equals("Blue")) {
-                        buttons[x][y].setStyle("-fx-background-color: #0000ff;"); // Blue
+                        buttons[x][y].setStyle("-fx-background-color: #0000ff;-fx-text-fill: white;"); // Blue
                     }
                 } else {
                     buttons[x][y].setText("");
@@ -84,5 +84,4 @@ public class GameView extends Application {
             }
         }
     }
-
 }

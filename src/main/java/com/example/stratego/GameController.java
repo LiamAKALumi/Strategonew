@@ -61,6 +61,12 @@ public class GameController {
 
         turn++;
         if(turn % 2 != 0){
+            // if the selected piece is not movable ignore the click
+            if(!model.isMoveablePiece(x,y))
+            {
+                turn--;
+                return;
+            }
             // Update the view
             selectedPieceX = x;
             selectedPieceY = y;
@@ -82,8 +88,8 @@ public class GameController {
 
 
         }
-        else
-            turn--; // not a legal move
+        else // destination
+            turn=0; // not a legal move
             // Update the view
         }
     }

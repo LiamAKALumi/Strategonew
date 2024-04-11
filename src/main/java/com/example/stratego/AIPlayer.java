@@ -47,7 +47,8 @@ public class AIPlayer {
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 Piece piece = board[x][y];
-                if (piece != null && piece.getColor().equals("Red")) {
+                //Generate all non scout moves
+                if (piece != null && piece.getColor().equals("Red") && piece.getRank()!=2 && piece.getRank()!=-1) {
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
                             if (dx == 0 && dy == 0) continue; // Skip the current cell
@@ -57,6 +58,24 @@ public class AIPlayer {
                                 Move move = new Move(x, y, newX, newY);
                                 if (model.isMoveValid(move)) {
                                     possibleMoves.add(move);
+                                }
+                            }
+                        }
+                    }
+                }
+                // Generate all scout moves
+                else{
+                    if(piece != null && piece.getColor().equals("Red") && piece.getRank()==2){
+                        for (int dx = -9; dx <= 9; dx++) {
+                            for (int dy = -9; dy <= 9; dy++) {
+                                if (dx == 0 && dy == 0) continue; // Skip the current cell
+                                int newX = x + dx;
+                                int newY = y + dy;
+                                if (newX >= 0 && newX < 10 && newY >= 0 && newY < 10) {
+                                    Move move = new Move(x, y, newX, newY);
+                                    if (model.isMoveValid(move)) {
+                                        possibleMoves.add(move);
+                                    }
                                 }
                             }
                         }
