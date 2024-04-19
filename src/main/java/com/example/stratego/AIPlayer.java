@@ -87,7 +87,7 @@ public class AIPlayer {
         // Prioritize moves that capture an opponent's piece
         for (Move move : possibleMoves) {
             Piece destPiece = board[move.getDestX()][move.getDestY()];
-            if (destPiece != null && destPiece.getColor().equals("Blue")) {
+            if (destPiece != null && destPiece.getColor().equals("Blue") && model.getInteractionResult(move)) {
                 return move;
             }
         }

@@ -19,11 +19,29 @@ public class GameModel {
         // Get the piece from the source position
         Piece piece = board.getPiece(move.getSourceX(), move.getSourceY());
 
-        // Set the piece to the destination position
-        board.setPiece(move.getDestX(), move.getDestY(), piece);
+        // Move the piece from its source to its destination
+        // STILL NEEDS WORK
+        if (board.getPiece(move.getDestX(), move.getDestY()) != null) {
 
-        // Remove the piece from the source position
-        board.setPiece(move.getSourceX(), move.getSourceY(), null);
+            if(!getInteractionResult(move)){
+                // Remove the piece from the source position
+                board.setPiece(move.getSourceX(), move.getSourceY(), null);
+                if(board.getPiece(move.getDestX(), move.getDestY()).getRank()==board.getPiece(move.getSourceX(), move.getSourceY()).getRank()){
+                    board.setPiece(move.getDestX(), move.getDestY(), null);
+                }
+            }
+            else{
+                board.setPiece(move.getSourceX(), move.getSourceY(), null);
+                // Set the piece to the destination position
+                board.setPiece(move.getDestX(), move.getDestY(), piece);
+            }
+        }
+        else{
+            // Remove the piece from the source position
+            board.setPiece(move.getSourceX(), move.getSourceY(), null);
+            // Set the piece to the destination position
+            board.setPiece(move.getDestX(), move.getDestY(), piece);
+        }
     }
     public boolean isMoveablePiece(int x,int y)
     {
@@ -120,6 +138,20 @@ public class GameModel {
             return scoutSpecialCase(move);
         }
         return false;
+    }
+    public boolean getInteractionResult(Move move){
+        // if defending piece is a bomb
+        if(board.getPiece(move.getDestX(), move.getDestY()).getType().equals("B")){
+            // return true if attacking troop is a miner. return false in all other cases
+            return board.getPiece(move.getSourceX(), move.getSourceY()).getType().equals("8");
+        }
+        // if defending piece is a marshal
+        if(board.getPiece(move.getDestX(), move.getDestY()).getType().equals("1")){
+            // return true if attacking troop is a spy. return false in all other cases
+            return board.getPiece(move.getSourceX(), move.getSourceY()).getType().equals("S");
+        }
+        // in every other case, just check if the attacking piece's rank is higher than the defenders. If so return true, else false
+        return board.getPiece(move.getDestX(), move.getDestY()).getRank()<board.getPiece(move.getSourceX(), move.getSourceY()).getRank();
     }
 
     public Piece[][] getBoard() {
