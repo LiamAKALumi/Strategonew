@@ -6,13 +6,33 @@ import java.util.List;
 
 // Board.java
 public class Board {
-    private Piece[][] board;
+        private Piece[][] board;
+        private ArrayList<Piece> playerPieces = new ArrayList<>();
+    private ArrayList<Piece> computerPieces = new ArrayList<>();
+    private ArrayList<Piece> knownPieces = new ArrayList<>();
 
-    public Board() {
-        this.board = new Piece[10][10];
-        initializeBoard();// assuming a 10x10 board
+    public ArrayList<Piece> getKnownPieces() {
+        return knownPieces;
     }
 
+    public void setKnownPieces(ArrayList<Piece> knownPieces) {
+        this.knownPieces = knownPieces;
+    }
+
+
+
+    public ArrayList<Piece> getPlayerPieces() {
+        return playerPieces;
+    }
+
+    public ArrayList<Piece> getComputerPieces() {
+        return computerPieces;
+    }
+
+    public Board() {
+            this.board = new Piece[10][10];
+            initializeBoard();// assuming a 10x10 board
+        }
     private void initializeBoard() {
         String[] colors = {"Red", "Blue"};
         for (String color : colors) {
@@ -37,9 +57,24 @@ public class Board {
             for (int i = 0; i < 4; i++) { // Loop over the top/bottom 4 rows
                 for (int j = 0; j < 10; j++) { // Loop over each column
                     if (color.equals("Red")) {
-                        board[i][j] = pieces[pieceIndex++]; // Place red pieces at the top
+                        Piece  p = pieces[pieceIndex];
+                        board[i][j] =p; // Place red pieces at the top
+                        p.setPosX(i);
+                        p.setPosY(j);
+                        pieceIndex++;
+                        computerPieces.add(p);
+
                     } else {
-                        board[i + 6][j] = pieces[pieceIndex++]; // Place blue pieces at the bottom
+                      //  board[i + 6][j] = pieces[pieceIndex++]; // Place blue pieces at the bottom
+                        Piece  p = pieces[pieceIndex];
+                        board[i+6][j] =p; // Place red pieces at the top
+                        p.setPosX(i+6);
+                        p.setPosY(j);
+                        pieceIndex++;
+                        playerPieces.add(p);
+
+
+
                     }
                 }
             }
@@ -53,6 +88,15 @@ public class Board {
             pieces[i] = new Piece(type, rank, color);
         }
         return pieces;
+    }
+
+    public void removePieceFromComputer(Piece p)
+    {
+        computerPieces.remove(p);
+    }
+    public void removePieceFromPlayer(Piece p)
+    {
+        playerPieces.remove(p);
     }
 
 

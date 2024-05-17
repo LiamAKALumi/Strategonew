@@ -6,6 +6,7 @@ import static java.lang.Math.abs;
 public class GameModel {
     private Board board;
 
+
     public GameModel() {
         this.board = new Board();
     }
@@ -16,19 +17,23 @@ public class GameModel {
             return;
         }
 
+
+        // When moving a piece - update the piece sertPosX setPosTY
+        // when Removing a piec - remove also from piecesArrayList -> computer & player
+
         // Get the piece from the source position
         Piece piece = board.getPiece(move.getSourceX(), move.getSourceY());
 
         // Move the piece from its source to its destination
-        // STILL NEEDS WORK
         if (board.getPiece(move.getDestX(), move.getDestY()) != null) {
 
             if(!getInteractionResult(move)){
                 // Remove the piece from the source position
-                board.setPiece(move.getSourceX(), move.getSourceY(), null);
                 if(board.getPiece(move.getDestX(), move.getDestY()).getRank()==board.getPiece(move.getSourceX(), move.getSourceY()).getRank()){
                     board.setPiece(move.getDestX(), move.getDestY(), null);
+                    //update the p
                 }
+                board.setPiece(move.getSourceX(), move.getSourceY(), null);
             }
             else{
                 board.setPiece(move.getSourceX(), move.getSourceY(), null);
@@ -43,6 +48,8 @@ public class GameModel {
             board.setPiece(move.getDestX(), move.getDestY(), piece);
         }
     }
+
+
     public boolean isMoveablePiece(int x,int y)
     {
         // check if the piece that is being moved is an unoccupied square
@@ -157,4 +164,7 @@ public class GameModel {
     public Piece[][] getBoard() {
         return board.getBoard();
     }
+
+
+    public Board getFullBoard(){return this.board;}
 }
