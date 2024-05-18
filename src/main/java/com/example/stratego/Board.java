@@ -56,8 +56,8 @@ public class Board {
             int pieceIndex = 0;
             for (int i = 0; i < 4; i++) { // Loop over the top/bottom 4 rows
                 for (int j = 0; j < 10; j++) { // Loop over each column
+                    Piece  p = pieces[pieceIndex];
                     if (color.equals("Red")) {
-                        Piece  p = pieces[pieceIndex];
                         board[i][j] =p; // Place red pieces at the top
                         p.setPosX(i);
                         p.setPosY(j);
@@ -66,7 +66,6 @@ public class Board {
 
                     } else {
                       //  board[i + 6][j] = pieces[pieceIndex++]; // Place blue pieces at the bottom
-                        Piece  p = pieces[pieceIndex];
                         board[i+6][j] =p; // Place red pieces at the top
                         p.setPosX(i+6);
                         p.setPosY(j);

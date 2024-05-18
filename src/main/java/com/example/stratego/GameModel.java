@@ -11,6 +11,10 @@ public class GameModel {
         this.board = new Board();
     }
 
+    public void updatePos(Move move){
+        board.getPiece(move.getSourceX(), move.getSourceY()).setPosX(move.getDestX());
+        board.getPiece(move.getSourceX(), move.getSourceY()).setPosY(move.getDestY());
+    }
     public void applyMove(Move move) {
         // Check if the move is valid
         if (!isMoveValid(move)) {
@@ -18,30 +22,84 @@ public class GameModel {
         }
 
 
-        // When moving a piece - update the piece sertPosX setPosTY
-        // when Removing a piec - remove also from piecesArrayList -> computer & player
+        // When moving a piece - update the piece setPosX setPosTY
+        // when Removing a piece - remove also from piecesArrayList -> computer & player
 
         // Get the piece from the source position
         Piece piece = board.getPiece(move.getSourceX(), move.getSourceY());
 
         // Move the piece from its source to its destination
         if (board.getPiece(move.getDestX(), move.getDestY()) != null) {
+            // this means that there was an attack
 
             if(!getInteractionResult(move)){
-                // Remove the piece from the source position
+                // this means that there was either a loss for the attacker or a tie
+                // in either scenario, there's no need to update the position of the piece itself, because it'll no longer be on the board
+
                 if(board.getPiece(move.getDestX(), move.getDestY()).getRank()==board.getPiece(move.getSourceX(), move.getSourceY()).getRank()){
+                    // if true, this means the outcome was a tie
+
+                    // update the pieces Arraylists
+                    if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getDestX(), move.getDestY()))){
+                        getFullBoard().getComputerPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                        getFullBoard().getPlayerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                        // update the knownPieces Arraylist
+                        getFullBoard().getKnownPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                    }
+                    else {
+                        getFullBoard().getPlayerPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                        getFullBoard().getComputerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                        // update the knownPieces Arraylist
+                        getFullBoard().getKnownPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                    }
+
                     board.setPiece(move.getDestX(), move.getDestY(), null);
-                    //update the p
+                }
+                // this means the outcome was a loss for the attacker
+
+                // update the pieces Arraylists
+                if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getSourceX(), move.getSourceY()))){
+                    getFullBoard().getComputerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                    // update the knownPieces Arraylist
+                    if(!getFullBoard().getKnownPieces().contains(board.getPiece(move.getDestX(), move.getDestY()))){
+                        getFullBoard().getKnownPieces().add(board.getPiece(move.getDestX(), move.getDestY()));
+                    }
+                }
+                else{
+                    getFullBoard().getPlayerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                    getFullBoard().getKnownPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
                 }
                 board.setPiece(move.getSourceX(), move.getSourceY(), null);
             }
             else{
+                // this means that the attack was successful
+
+                // there is a need to change the position of the piece itself
+                updatePos(move);
+                // update the pieces Arraylists
+                if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getDestX(), move.getDestY()))){
+                    getFullBoard().getComputerPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                    // update the knownPieces Arraylist
+                    if(!getFullBoard().getKnownPieces().contains(board.getPiece(move.getSourceX(), move.getSourceY()))){
+                        getFullBoard().getKnownPieces().add(board.getPiece(move.getSourceX(), move.getSourceY()));
+                    }
+                }
+                else{
+                    getFullBoard().getComputerPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                    // update the knownPieces Arraylist
+                    getFullBoard().getKnownPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                }
+                // Remove the piece from the source position
                 board.setPiece(move.getSourceX(), move.getSourceY(), null);
-                // Set the piece to the destination position
+                // Set the piece to the destination position, overriding the defending piece
                 board.setPiece(move.getDestX(), move.getDestY(), piece);
             }
         }
         else{
+            // this means that there wasn't an attack
+
+            // there is a need to change the position of the piece itself
+            updatePos(move);
             // Remove the piece from the source position
             board.setPiece(move.getSourceX(), move.getSourceY(), null);
             // Set the piece to the destination position
@@ -50,7 +108,7 @@ public class GameModel {
     }
 
 
-    public boolean isMoveablePiece(int x,int y)
+    public boolean isMovablePiece(int x, int y)
     {
         // check if the piece that is being moved is an unoccupied square
         if(board.getPiece(x, y)==null) {

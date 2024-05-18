@@ -1,9 +1,5 @@
 package com.example.stratego;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 // GameController.java
 public class GameController {
     private GameModel model;
@@ -62,7 +58,7 @@ public class GameController {
         turn++;
         if(turn % 2 != 0){
             // if the selected piece is not movable ignore the click
-            if(!model.isMoveablePiece(x,y))
+            if(!model.isMovablePiece(x,y))
             {
                 turn--;
                 return;

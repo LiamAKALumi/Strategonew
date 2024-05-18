@@ -1,6 +1,5 @@
 package com.example.stratego;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -54,7 +53,7 @@ public class AIPlayer {
     }
 
 
-    private void discverStage(){
+    private void openingStage(){
 
 
     }
@@ -66,7 +65,7 @@ public class AIPlayer {
                 Piece p = getClosetEnemyPiece(firstRow.get(i));
                 // if p is not null
                 // perform move
-                // update the knowPeices array
+                // update the knowPieces array
                 // return
                 if(p!=null) {
 
@@ -92,7 +91,7 @@ public class AIPlayer {
         return null;
     }
 
-    private boolean isImeediateThread()
+    private boolean isImmediateThread()
     {
         return true;
     }
@@ -116,10 +115,10 @@ public class AIPlayer {
 
         if(model.getFullBoard().getKnownPieces().size() < 10)
         {
-            discverStage();
+            openingStage();
         }
 
-        if(isImeediateThread())
+        if(isImmediateThread())
         {
             performImmediateDefence();
 
