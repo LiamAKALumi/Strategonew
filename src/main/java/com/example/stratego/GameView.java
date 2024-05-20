@@ -14,6 +14,8 @@ public class GameView extends Application {
 
     private static final int BOARD_SIZE = 600;
     private static final int NUM_CELLS = 10;
+
+    //////
     private Button[][] buttons = new Button[NUM_CELLS][NUM_CELLS];
 
     @Override
