@@ -1,19 +1,36 @@
 package com.example.stratego;
-
+//
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 public class AIPlayer {
     private GameModel model;
     private Random random;
+    private Piece flag;
+    private Piece suspectedEnemyFlag;
+    private double score;
+
+
+    Iterator it = model.getFullBoard().getComputerPieces().iterator();
+
+
 
 
 
     public AIPlayer(GameModel model) {
         this.model = model;
         this.random = new Random();
+        this.score=0;
+        Iterator it = model.getFullBoard().getComputerPieces().iterator();
+        for(Piece p:model.getFullBoard().getComputerPieces()){
+            if(p.getType().equals("F")){
+                this.flag=p;
+            }
+        }
     }
+
 
     public void makeMove() {
         Move move = generateMove();
@@ -53,7 +70,18 @@ public class AIPlayer {
     }
 
 
-    private void openingStage(){
+    private void openingStage(Move move){
+        Piece p=model.getBoard()[move.getSourceX()][move.getSourceY()];
+        // check if the piece has moved yet
+        // if not, give a small score reduction to moving it to discourage movement
+        if(p.hasMoved()){
+           score-=p.getRank()*0.1;
+        }
+        // check if the move is initiating an attack
+        // if so, calculate how good it is to go for the attack
+        if(model.getBoard()[move.getDestX()][move.getDestY()]!=null){
+
+        }
 
 
     }
@@ -93,7 +121,13 @@ public class AIPlayer {
 
     private boolean isImmediateThread()
     {
-        return true;
+        Iterator enemyIt = model.getFullBoard().getPlayerPieces().iterator();
+        for(Piece p:model.getFullBoard().getPlayerPieces()){
+            if(flag.calcDistance(p)<=2){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void performImmediateDefence() {

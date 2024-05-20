@@ -5,9 +5,8 @@ public class Piece {
     private int rank;
     private String color;
     private int posX;
-
-
     private int posY;
+    private boolean moved;
 
     public Piece(String type, int rank, String color) {
         this.type = type;
@@ -53,7 +52,16 @@ public class Piece {
     public void setPosY(int posY) {
         this.posY = posY;
     }
+    public boolean hasMoved() {
+        return moved;
+    }
 
+    public void setMoved(boolean moved) {
+        this.moved = moved;
+    }
+    public boolean canAttack(Piece other) {return calcDistance(other)==1&&!color.equals(other.getColor());}
+
+    public int calcDistance(Piece other){ return Math.abs(posX-other.getPosX())+Math.abs(posY-other.getPosY());}
     @Override
     public String toString() {
         return  type + " : "+

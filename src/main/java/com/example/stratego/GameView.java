@@ -12,6 +12,7 @@ public class GameView extends Application {
 
     // liam first comment
 
+
     private static final int BOARD_SIZE = 600;
     private static final int NUM_CELLS = 10;
 
