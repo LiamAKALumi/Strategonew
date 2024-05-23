@@ -1,12 +1,16 @@
 package com.example.stratego;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class GameView extends Application {
 
@@ -69,13 +73,14 @@ public class GameView extends Application {
     }
 
 // example
-    public void updateView(Piece[][] board) {
+    public void updateView(Piece[][] board,boolean isOver,int player) {
         for (int x = 0; x < NUM_CELLS; x++) {
             for (int y = 0; y < NUM_CELLS; y++) {
                 Piece piece = board[x][y];
                 if (piece != null) {
                     if (piece.getColor().equals("Red")) {
                         buttons[x][y].setStyle("-fx-background-color: #ff0000;"); // Red
+                        buttons[x][y].setText("");
                     } else if (piece.getColor().equals("Blue")) {
                         buttons[x][y].setText(piece.getType());
                         buttons[x][y].setStyle("-fx-background-color: #0000ff;-fx-text-fill: white;"); // Blue
@@ -86,5 +91,35 @@ public class GameView extends Application {
                 }
             }
         }
+
+        if(isOver) {
+            // show popup
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            String title = "game over player " + player + " WON ";
+            a.setTitle("GAME OVER ");
+            a.setContentText(title);
+
+
+
+            // show the dialog
+        //    a.show();
+
+
+            Optional<ButtonType> result = a.showAndWait();
+            ButtonType button = result.orElse(ButtonType.OK);
+
+            if (button == ButtonType.OK) {
+                System.exit(1);
+                Platform.exit();
+            }
+
+
+
+            System.out.println("GAME OVER");
+
+
+
+        }
+
     }
 }

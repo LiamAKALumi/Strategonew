@@ -6,6 +6,8 @@ import static java.lang.Math.abs;
 public class GameModel {
     private Board board;
 
+    private boolean gameOver = false;
+
 
     public GameModel() {
         this.board = new Board();
@@ -78,6 +80,14 @@ public class GameModel {
             }
             else{
                 // this means that the attack was successful
+
+                // check -whether a move is a winning move
+                //  check if dest is FLAG
+
+                if(board.getPiece(move.getDestX(), move.getDestY()).getType().equals("F")){
+                    gameOver=true;
+                }
+
 
                 // there is a need to change the position of the piece itself
                 updatePos(move);
@@ -217,4 +227,8 @@ public class GameModel {
 
 
     public Board getFullBoard(){return this.board;}
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
 }

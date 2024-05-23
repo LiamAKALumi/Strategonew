@@ -26,7 +26,7 @@ public class GameController {
 
     public void init()
     {
-        view.updateView(model.getBoard());
+        view.updateView(model.getBoard(),model.isGameOver(),0);
 
     }
 
@@ -75,11 +75,11 @@ public class GameController {
         // Call the handleUserMove method
         if(handleUserMove(move)){
                 // Update the view
-                view.updateView(model.getBoard());
+                view.updateView(model.getBoard(),model.isGameOver(),1);
 
             // Let the AI player make a move
             aiPlayer.makeMove();
-            view.updateView(model.getBoard());
+            view.updateView(model.getBoard(),model.isGameOver(),2);
 
 
 

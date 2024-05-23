@@ -10,7 +10,7 @@ public class AIPlayer {
     private double score;
 
 
-    Iterator it = model.getFullBoard().getComputerPieces().iterator();
+    Iterator it;
 
 
 
@@ -20,6 +20,7 @@ public class AIPlayer {
         this.model = model;
         this.randomFactor = new Random();
         this.score=0;
+        it = model.getFullBoard().getComputerPieces().iterator();
         for(Piece p:model.getFullBoard().getComputerPieces()){
             if(p.getType().equals("F")){
                 this.flag=p;
@@ -333,12 +334,12 @@ public class AIPlayer {
 
         for(Piece piece: model.getFullBoard().getComputerPieces())
         {
-            if(piece.getRank() > bestRank && enemyPiece.calcDistance(piece)==1)
+            if((piece.checkInteraction(enemyPiece)||piece.getRank()==enemyPiece.getRank())&& enemyPiece.calcDistance(piece)==1)
             {
-                highestRank = piece;
-                bestRank= highestRank.getRank();
-
-
+                if(piece.getRank()>bestRank){
+                    highestRank = piece;
+                    bestRank= highestRank.getRank();
+                }
             }
         }
 
@@ -392,7 +393,11 @@ public class AIPlayer {
         Piece p = isImmediateThread();
         if(p!=null)
         {
-            performImmediateDefence(p);
+            Move m = performImmediateDefence(p);
+            // this menas that there is an immeidate thread
+            // if there is a move to stop it -> return the move
+            if(m!=null)
+                return m;
 
         }
 
