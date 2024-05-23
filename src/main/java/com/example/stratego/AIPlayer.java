@@ -1,13 +1,10 @@
 package com.example.stratego;
 //
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class AIPlayer {
     private GameModel model;
-    private Random random;
+    private Random randomFactor;
     private Piece flag;
     private Piece suspectedEnemyFlag;
     private double score;
@@ -21,9 +18,8 @@ public class AIPlayer {
 
     public AIPlayer(GameModel model) {
         this.model = model;
-        this.random = new Random();
+        this.randomFactor = new Random();
         this.score=0;
-        Iterator it = model.getFullBoard().getComputerPieces().iterator();
         for(Piece p:model.getFullBoard().getComputerPieces()){
             if(p.getType().equals("F")){
                 this.flag=p;
@@ -70,8 +66,58 @@ public class AIPlayer {
     }
 
 
-    private void openingStage(Move move){
-        Piece p=model.getBoard()[move.getSourceX()][move.getSourceY()];
+    private void openingStage(){
+       double maxScore=-999;
+       Move maxMove;
+       // go over every piece
+       for(Piece p:model.getFullBoard().getComputerPieces()){
+           // go over every movable piece
+           if (model.isMovablePiece(p.getPosX(),p.getPosY())){
+               Move m=new Move(p.getPosX(),p.getPosY(),p.getPosX()-1,p.getPosY());
+               if(p.getPosX()!=0&& model.isMoveValid(m)){
+                   double score=0;
+                   if(!p.isRevealed()){
+                       score-=p.getValue()*0.2;
+                   }
+                   // if the move is an attack
+                   if(model.getBoard()[m.getDestX()][m.getDestY()]!=null&& model.getBoard()[m.getDestX()][m.getDestY()].getColor().equals("Blue")){
+                       // if the opposing piece is known, calculate how worth it it is to attack that piece
+                       if(model.getFullBoard().getKnownPieces().contains(model.getBoard()[m.getDestX()][m.getDestY()])){
+                           if(model.getInteractionResult(m)){
+                               score+=model.getBoard()[m.getDestX()][m.getDestY()].getValue()*3-p.getValue();
+                           }
+                           else{
+                               score-=p.getValue()*3;
+                           }
+                       }
+                       // if the opposing piece is not known, first, increase the value of the score as you are revealing a piece. then, calculate how worth it is to attack the piece
+                       else{
+                           score+=10-p.getValue()*1.5;
+                           for(Piece enemyPiece:model.getFullBoard().getPlayerPieces()){
+                               if(p.checkInteraction(enemyPiece)){
+                                   score+=0.1*((double) 40 /model.getFullBoard().getPlayerPieces().size());
+                               }
+                               else{
+                                   score-=p.getValue()*0.1*((double) 40 /model.getFullBoard().getPlayerPieces().size());
+                               }
+                           }
+                       }
+                       //if the move isn't an attacking move
+
+                       // add a random factor between 0.9 and 1 in the end
+                       score*=(double)(randomFactor.nextInt(11)+90)/100;
+                       if(score>maxScore){
+                           maxScore=score;
+                           maxMove=m;
+                       }
+                   }
+                   //repeat for the other 3 directions
+
+               }
+           }
+       }
+
+        /*
         // check if the piece has moved yet
         // if not, give a small score reduction to moving it to discourage movement
         if(p.hasMoved()){
@@ -82,6 +128,10 @@ public class AIPlayer {
         if(model.getBoard()[move.getDestX()][move.getDestY()]!=null){
 
         }
+
+         */
+
+
 
 
     }
@@ -119,18 +169,86 @@ public class AIPlayer {
         return null;
     }
 
-    private boolean isImmediateThread()
+    private Piece isImmediateThread()
     {
         Iterator enemyIt = model.getFullBoard().getPlayerPieces().iterator();
         for(Piece p:model.getFullBoard().getPlayerPieces()){
             if(flag.calcDistance(p)<=2){
-                return true;
+                return p;
             }
         }
-        return false;
+        return null;
     }
 
-    private void performImmediateDefence() {
+    private Move performImmediateDefence(Piece enemyPiece) {
+        // 1 check if p is int known peices
+        //      Defend with a piece that can beat him on offence
+
+        if(model.getFullBoard().getKnownPieces().contains(enemyPiece))
+        {
+            // check in my pieces with distance 1 -> and attack
+            for(Piece piece: model.getFullBoard().getComputerPieces())
+            {
+                if(piece.getRank() >= enemyPiece.getRank() && enemyPiece.calcDistance(piece) ==1)
+                {
+                    // move
+                    // return
+                    Move m=new Move(piece.getPosX(),piece.getPosY(), enemyPiece.getPosX(), enemyPiece.getPosY());
+                    return m;
+                }
+            }
+
+        }
+
+        // 2 if p is not in known pieces:
+        //      chekc in my pieces if there is a a piece distance 1 to enemy
+        //         if there is -> find hisghest rank and attack
+
+
+        Piece highestRank = null;
+        int bestRank = Integer.MIN_VALUE;
+
+        for(Piece piece: model.getFullBoard().getComputerPieces())
+        {
+            if(piece.getRank() > bestRank && enemyPiece.calcDistance(piece)==1)
+            {
+                highestRank = piece;
+                bestRank= highestRank.getRank();
+
+
+            }
+        }
+
+        if(highestRank != null )
+        {
+            // make move
+            // return
+
+            return new Move(highestRank.getPosX(), highestRank.getPosY(), enemyPiece.getPosX(), enemyPiece.getPosY());
+        }
+
+
+        //     if there is no such piece -. find highest rank  distance 2 and move closer...
+        for(Piece piece: model.getFullBoard().getComputerPieces())
+        {
+            if(piece.getRank() > bestRank && enemyPiece.calcDistance(piece)==2)
+            {
+                highestRank = piece;
+                bestRank= highestRank.getRank();
+
+
+            }
+        }
+        //     we can move right up left down
+        //     if no?  general move -> return
+        if(highestRank!=null){return  highestRank.getCloserToOtherPiece(enemyPiece);}
+        //     if no?  general move -> return
+        //     CHANGE TO GENERAL MOVE FUNCTION WHEN THAT FUNCTION GETS WRITTEN
+        return null;
+
+
+
+
 
     }
 
@@ -147,16 +265,21 @@ public class AIPlayer {
         }
 
 
+
+        Piece p = isImmediateThread();
+        if(p!=null)
+        {
+            performImmediateDefence(p);
+
+        }
+
+
         if(model.getFullBoard().getKnownPieces().size() < 10)
         {
             openingStage();
         }
 
-        if(isImmediateThread())
-        {
-            performImmediateDefence();
 
-        }
 
 
 
@@ -213,7 +336,7 @@ public class AIPlayer {
 
         // If no capturing move is found, fall back to a random move
         if (!possibleMoves.isEmpty()) {
-            return possibleMoves.get(random.nextInt(possibleMoves.size()));
+            return possibleMoves.get(randomFactor.nextInt(possibleMoves.size()));
         }
 
         // If no valid move is found, return null

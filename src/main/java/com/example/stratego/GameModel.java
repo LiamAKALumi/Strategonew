@@ -22,11 +22,14 @@ public class GameModel {
         }
 
 
+
         // When moving a piece - update the piece setPosX setPosTY
         // when Removing a piece - remove also from piecesArrayList -> computer & player
 
         // Get the piece from the source position
         Piece piece = board.getPiece(move.getSourceX(), move.getSourceY());
+        // Update that the piece has been revealed
+        piece.setRevealed(true);
 
         // Move the piece from its source to its destination
         if (board.getPiece(move.getDestX(), move.getDestY()) != null) {
@@ -56,6 +59,8 @@ public class GameModel {
                     board.setPiece(move.getDestX(), move.getDestY(), null);
                 }
                 // this means the outcome was a loss for the attacker
+                board.getPiece(move.getDestX(), move.getDestY()).setRevealed(true);
+
 
                 // update the pieces Arraylists
                 if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getSourceX(), move.getSourceY()))){
@@ -204,20 +209,7 @@ public class GameModel {
         }
         return false;
     }
-    public boolean getInteractionResult(Move move){
-        // if defending piece is a bomb
-        if(board.getPiece(move.getDestX(), move.getDestY()).getType().equals("B")){
-            // return true if attacking troop is a miner. return false in all other cases
-            return board.getPiece(move.getSourceX(), move.getSourceY()).getType().equals("8");
-        }
-        // if defending piece is a marshal
-        if(board.getPiece(move.getDestX(), move.getDestY()).getType().equals("1")){
-            // return true if attacking troop is a spy. return false in all other cases
-            return board.getPiece(move.getSourceX(), move.getSourceY()).getType().equals("S");
-        }
-        // in every other case, just check if the attacking piece's rank is higher than the defenders. If so return true, else false
-        return board.getPiece(move.getDestX(), move.getDestY()).getRank()<board.getPiece(move.getSourceX(), move.getSourceY()).getRank();
-    }
+    public boolean getInteractionResult(Move move){return board.getPiece(move.getSourceX(), move.getSourceY()).checkInteraction(board.getPiece(move.getDestX(),move.getDestY()));}
 
     public Piece[][] getBoard() {
         return board.getBoard();
