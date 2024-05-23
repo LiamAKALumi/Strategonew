@@ -102,7 +102,6 @@ public class GameView extends Application {
 
 
             // show the dialog
-        //    a.show();
 
 
             Optional<ButtonType> result = a.showAndWait();
