@@ -67,15 +67,17 @@ public class AIPlayer {
 
 
     private void openingStage(){
+       double score;
        double maxScore=-999;
+       Move m;
        Move maxMove;
        // go over every piece
        for(Piece p:model.getFullBoard().getComputerPieces()){
            // go over every movable piece
            if (model.isMovablePiece(p.getPosX(),p.getPosY())){
-               Move m=new Move(p.getPosX(),p.getPosY(),p.getPosX()-1,p.getPosY());
+               m=new Move(p.getPosX(),p.getPosY(),p.getPosX()-1,p.getPosY());
                if(p.getPosX()!=0&& model.isMoveValid(m)){
-                   double score=0;
+                   score=0;
                    if(!p.isRevealed()){
                        score-=p.getValue()*0.2;
                    }
@@ -111,8 +113,129 @@ public class AIPlayer {
                            maxMove=m;
                        }
                    }
-                   //repeat for the other 3 directions
+               }
+               //repeat for the other 3 directions
 
+               //forwards
+
+               m=new Move(p.getPosX(),p.getPosY(),p.getPosX()+1,p.getPosY());
+               if(p.getPosX()!=10&& model.isMoveValid(m)){
+                   score=0;
+                   if(!p.isRevealed()){
+                       score-=p.getValue()*0.2;
+                   }
+                   // if the move is an attack
+                   if(model.getBoard()[m.getDestX()][m.getDestY()]!=null&& model.getBoard()[m.getDestX()][m.getDestY()].getColor().equals("Blue")){
+                       // if the opposing piece is known, calculate how worth it it is to attack that piece
+                       if(model.getFullBoard().getKnownPieces().contains(model.getBoard()[m.getDestX()][m.getDestY()])){
+                           if(model.getInteractionResult(m)){
+                               score+=model.getBoard()[m.getDestX()][m.getDestY()].getValue()*3-p.getValue();
+                           }
+                           else{
+                               score-=p.getValue()*3;
+                           }
+                       }
+                       // if the opposing piece is not known, first, increase the value of the score as you are revealing a piece. then, calculate how worth it is to attack the piece
+                       else{
+                           score+=10-p.getValue()*1.5;
+                           for(Piece enemyPiece:model.getFullBoard().getPlayerPieces()){
+                               if(p.checkInteraction(enemyPiece)){
+                                   score+=0.1*((double) 40 /model.getFullBoard().getPlayerPieces().size());
+                               }
+                               else{
+                                   score-=p.getValue()*0.1*((double) 40 /model.getFullBoard().getPlayerPieces().size());
+                               }
+                           }
+                       }
+                       //if the move isn't an attacking move
+
+                       // add a random factor between 0.9 and 1 in the end
+                       score*=(double)(randomFactor.nextInt(11)+90)/100;
+                       if(score>maxScore){
+                           maxScore=score;
+                           maxMove=m;
+                       }
+                   }
+
+                   // left
+
+                   m=new Move(p.getPosX(),p.getPosY(),p.getPosX(),p.getPosY()-1);
+                   if(p.getPosX()!=10&& model.isMoveValid(m)) {
+                       score = 0;
+                       if (!p.isRevealed()) {
+                           score -= p.getValue() * 0.2;
+                       }
+                       // if the move is an attack
+                       if (model.getBoard()[m.getDestX()][m.getDestY()] != null && model.getBoard()[m.getDestX()][m.getDestY()].getColor().equals("Blue")) {
+                           // if the opposing piece is known, calculate how worth it it is to attack that piece
+                           if (model.getFullBoard().getKnownPieces().contains(model.getBoard()[m.getDestX()][m.getDestY()])) {
+                               if (model.getInteractionResult(m)) {
+                                   score += model.getBoard()[m.getDestX()][m.getDestY()].getValue() * 3 - p.getValue();
+                               } else {
+                                   score -= p.getValue() * 3;
+                               }
+                           }
+                           // if the opposing piece is not known, first, increase the value of the score as you are revealing a piece. then, calculate how worth it is to attack the piece
+                           else {
+                               score += 10 - p.getValue() * 1.5;
+                               for (Piece enemyPiece : model.getFullBoard().getPlayerPieces()) {
+                                   if (p.checkInteraction(enemyPiece)) {
+                                       score += 0.1 * ((double) 40 / model.getFullBoard().getPlayerPieces().size());
+                                   } else {
+                                       score -= p.getValue() * 0.1 * ((double) 40 / model.getFullBoard().getPlayerPieces().size());
+                                   }
+                               }
+                           }
+                           //if the move isn't an attacking move
+
+                           // add a random factor between 0.9 and 1 in the end
+                           score *= (double) (randomFactor.nextInt(11) + 90) / 100;
+                           if (score > maxScore) {
+                               maxScore = score;
+                               maxMove = m;
+                           }
+                       }
+                   }
+
+                   // right
+
+                   m=new Move(p.getPosX(),p.getPosY(),p.getPosX(),p.getPosY()+1);
+                   if(p.getPosX()!=10&& model.isMoveValid(m)) {
+                       score = 0;
+                       if (!p.isRevealed()) {
+                           score -= p.getValue() * 0.2;
+                       }
+                       // if the move is an attack
+                       if (model.getBoard()[m.getDestX()][m.getDestY()] != null && model.getBoard()[m.getDestX()][m.getDestY()].getColor().equals("Blue")) {
+                           // if the opposing piece is known, calculate how worth it it is to attack that piece
+                           if (model.getFullBoard().getKnownPieces().contains(model.getBoard()[m.getDestX()][m.getDestY()])) {
+                               if (model.getInteractionResult(m)) {
+                                   score += model.getBoard()[m.getDestX()][m.getDestY()].getValue() * 3 - p.getValue();
+                               } else {
+                                   score -= p.getValue() * 3;
+                               }
+                           }
+                           // if the opposing piece is not known, first, increase the value of the score as you are revealing a piece. then, calculate how worth it is to attack the piece
+                           else {
+                               score += 10 - p.getValue() * 1.5;
+                               for (Piece enemyPiece : model.getFullBoard().getPlayerPieces()) {
+                                   if (p.checkInteraction(enemyPiece)) {
+                                       score += 0.1 * ((double) 40 / model.getFullBoard().getPlayerPieces().size());
+                                   } else {
+                                       score -= p.getValue() * 0.1 * ((double) 40 / model.getFullBoard().getPlayerPieces().size());
+                                   }
+                               }
+                           }
+                           //if the move isn't an attacking move
+
+                           // add a random factor between 0.9 and 1 in the end
+                           score *= (double) (randomFactor.nextInt(11) + 90) / 100;
+                           if (score > maxScore) {
+                               maxScore = score;
+                               maxMove = m;
+                           }
+                       }
+                   }
                }
            }
        }
@@ -342,6 +465,7 @@ public class AIPlayer {
         // If no valid move is found, return null
         return null;
     }
+    //
 
 
 }
