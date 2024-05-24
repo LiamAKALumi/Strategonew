@@ -112,7 +112,7 @@ public class GameView extends Application {
                 Platform.exit();
             }
 
-
+//
 
             System.out.println("GAME OVER");
 
