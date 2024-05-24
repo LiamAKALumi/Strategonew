@@ -88,7 +88,7 @@ public class Piece {
         // if only possible to get closer with the X axis, go in the X axis
         if(posX!= other.getPosX()&&posY== other.getPosY()) {
             if(posX> other.getPosX()){
-                return new Move (posX,posY, posX-1, posY);
+                 Move move =new Move (posX,posY, posX-1, posY);
             }
             return new Move (posX,posY, posX+1, posY);
         }

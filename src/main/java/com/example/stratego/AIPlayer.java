@@ -318,7 +318,9 @@ public class AIPlayer {
                     // move
                     // return
                     Move m=new Move(piece.getPosX(),piece.getPosY(), enemyPiece.getPosX(), enemyPiece.getPosY());
-                    return m;
+                    if(model.isMoveValid(m)){
+                        return m;
+                    }
                 }
             }
 
@@ -365,7 +367,7 @@ public class AIPlayer {
         }
         //     we can move right up left down
         //     if no?  general move -> return
-        if(highestRank!=null){return  highestRank.getCloserToOtherPiece(enemyPiece);}
+        if(highestRank!=null){return model.getCloserToOtherPiece(highestRank,enemyPiece);}
         //     if no?  general move -> return
         //     CHANGE TO GENERAL MOVE FUNCTION WHEN THAT FUNCTION GETS WRITTEN
         return null;
@@ -394,16 +396,18 @@ public class AIPlayer {
         if(p!=null)
         {
             Move m = performImmediateDefence(p);
-            // this menas that there is an immeidate thread
+            // this means that there is an immediate thread
             // if there is a move to stop it -> return the move
-            if(m!=null)
+            if(m!=null) {
+                turnCount++;
                 return m;
-
+            }
         }
 
 
         if(model.getFullBoard().getKnownPieces().size() < 10)
         {
+            turnCount++;
             openingStage();
         }
 

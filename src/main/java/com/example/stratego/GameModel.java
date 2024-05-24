@@ -1,6 +1,8 @@
 package com.example.stratego;
 // GameModel.java
 // GameModel.java
+import java.util.Random;
+
 import static java.lang.Math.abs;
 
 public class GameModel {
@@ -100,7 +102,7 @@ public class GameModel {
                     }
                 }
                 else{
-                    getFullBoard().getComputerPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
+                    getFullBoard().getPlayerPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
                     // update the knownPieces Arraylist
                     getFullBoard().getKnownPieces().remove(board.getPiece(move.getDestX(), move.getDestY()));
                 }
@@ -201,8 +203,15 @@ public class GameModel {
 
     }
     public boolean isMoveValid(Move move) {
-
-         // check if the piece is going to an unoccupied square
+        // check if the move doesn't cause an out of bounds exception
+        if(move.getDestX()>=10||move.getDestX()<0||move.getDestY()>=10||move.getDestY()<0){
+            return false;
+        }
+        // check if the moving piece can move
+        if(board.getPiece(move.getSourceX(), move.getSourceY()).getRank()==-1){
+            return false;
+        }
+        // check if the piece is going to an unoccupied square
         if(board.getPiece(move.getDestX(), move.getDestY())!=null){
             // if it's not, check if it's going to a square that is occupied by a piece with the same color
             if(board.getPiece(move.getSourceX(), move.getSourceY()).getColor().equals(board.getPiece(move.getDestX(), move.getDestY()).getColor())){
@@ -230,5 +239,56 @@ public class GameModel {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+    public Move getCloserToOtherPiece(Piece p, Piece other) {
+        // if only possible to get closer with the X axis, go in the X axis
+        if(p.getPosX()!= other.getPosX()&&p.getPosY()== other.getPosY()) {
+            Move move;
+            if(p.getPosX()> other.getPosX()){
+                move = new Move(p.getPosX(), p.getPosY(), p.getPosX() - 1, p.getPosY());
+            }
+            else{
+                move = new Move(p.getPosX(), p.getPosY(), p.getPosX() + 1, p.getPosY());
+            }
+            if (isMoveValid(move)){
+                return move;
+            }
+        }
+        if(p.getPosY()!= other.getPosY()&&p.getPosX()== other.getPosX()) {
+            Move move;
+            if(p.getPosY()> other.getPosY()){
+                move = new Move(p.getPosX(), p.getPosY(), p.getPosX(), p.getPosY() - 1);
+            }
+            else{
+                move = new Move(p.getPosX(), p.getPosY(), p.getPosX(), p.getPosY() + 1);
+            }
+            if (isMoveValid(move)){
+                return move;
+            }
+        }
+        // if both are possible, choose one of the options
+        if(p.getPosX()!= other.getPosX()&&p.getPosY()!= other.getPosY()) {
+            if(p.getPosX()> other.getPosX()){
+                Move move = new Move (p.getPosX(),p.getPosY(), p.getPosX()-1, p.getPosY());
+                if(isMoveValid(move)){
+                    return move;
+                }
+            }
+            Move move=new Move (p.getPosX(),p.getPosY(), p.getPosX()+1, p.getPosY());
+            if(isMoveValid(move)){
+                return move;
+            }
+        }
+        if(p.getPosY()> other.getPosY()){
+            Move move = new Move (p.getPosX(),p.getPosY(), p.getPosX(),p.getPosY()-1);
+            if(isMoveValid(move)){
+                return move;
+            }
+        }
+        Move move= new Move (p.getPosX(),p.getPosY(), p.getPosX(), p.getPosY()+1);
+        if(isMoveValid(move)){
+            return move;
+        }
+        return null;
     }
 }
