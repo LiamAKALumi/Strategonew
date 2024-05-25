@@ -67,15 +67,15 @@ public class AIPlayer {
     }
 
 
-    private void openingStage(){
+    private Move openingStage(){
        double score;
        double maxScore=-999;
        Move m;
-       Move maxMove;
+       Move maxMove=null;
        // go over every piece
        for(Piece p:model.getFullBoard().getComputerPieces()){
            // go over every movable piece
-           if (model.isMovablePiece(p.getPosX(),p.getPosY())){
+           if (model.isComputerMovablePiece(p.getPosX(),p.getPosY())){
                m=new Move(p.getPosX(),p.getPosY(),p.getPosX()-1,p.getPosY());
                if(p.getPosX()!=0&& model.isMoveValid(m)){
                    score=0;
@@ -105,14 +105,20 @@ public class AIPlayer {
                                }
                            }
                        }
-                       //if the move isn't an attacking move
+                   }
+                   // if the move isn't an attacking move
+                   // discourage going backwards as it makes getting information take more time
+                   // make it so that the less valuable pieces going backwards is more punishing
+                   else{
+                       score+=p.getValue()-1;
+                   }
 
-                       // add a random factor between 0.9 and 1 in the end
-                       score*=(double)(randomFactor.nextInt(11)+90)/100;
-                       if(score>maxScore){
-                           maxScore=score;
-                           maxMove=m;
-                       }
+
+                   // add a random factor between 0.9 and 1 in the end
+                   score*=(double)(randomFactor.nextInt(11)+90)/100;
+                   if(score>maxScore){
+                       maxScore=score;
+                       maxMove=m;
                    }
                }
                //repeat for the other 3 directions
@@ -148,14 +154,20 @@ public class AIPlayer {
                                }
                            }
                        }
-                       //if the move isn't an attacking move
+                   }
+                   // if the move isn't an attacking move
+                   // discourage going backwards as it makes getting information take more time
+                   // make it so that the less valuable pieces going backwards is more punishing
+                   else{
+                       score+=p.getValue()-1;
+                   }
 
-                       // add a random factor between 0.9 and 1 in the end
-                       score*=(double)(randomFactor.nextInt(11)+90)/100;
-                       if(score>maxScore){
-                           maxScore=score;
-                           maxMove=m;
-                       }
+
+                   // add a random factor between 0.9 and 1 in the end
+                   score*=(double)(randomFactor.nextInt(11)+90)/100;
+                   if(score>maxScore){
+                       maxScore=score;
+                       maxMove=m;
                    }
 
                    // left
@@ -187,7 +199,10 @@ public class AIPlayer {
                                    }
                                }
                            }
-                           //if the move isn't an attacking move
+                       }
+                       else {
+                           // if the move isn't an attacking move
+                           // don't give any notable benefits to going to the sides
 
                            // add a random factor between 0.9 and 1 in the end
                            score *= (double) (randomFactor.nextInt(11) + 90) / 100;
@@ -227,7 +242,10 @@ public class AIPlayer {
                                    }
                                }
                            }
-                           //if the move isn't an attacking move
+                       }
+                       else {
+                           // if the move isn't an attacking move
+                           // don't give any notable benefits to going to the sides
 
                            // add a random factor between 0.9 and 1 in the end
                            score *= (double) (randomFactor.nextInt(11) + 90) / 100;
@@ -240,6 +258,7 @@ public class AIPlayer {
                }
            }
        }
+       return maxMove;
 
         /*
         // check if the piece has moved yet
@@ -261,7 +280,7 @@ public class AIPlayer {
     }
     private Move firstTwoMoves(){
         ArrayList<Piece> firstRow = firstRowPieces();
-        for(int i=0; i<10; i++){
+        for(int i=0; i<6; i++){
             //look for scouts in the first row to gather information
             if (firstRow.get(i).getRank()==2){ // this means it is a scout
                 Piece p = getClosetEnemyPiece(firstRow.get(i));
@@ -408,7 +427,7 @@ public class AIPlayer {
         if(model.getFullBoard().getKnownPieces().size() < 10)
         {
             turnCount++;
-            openingStage();
+            return openingStage();
         }
 
 
