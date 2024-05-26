@@ -64,7 +64,7 @@ public class Board {
             piecesList.addAll(Arrays.asList(createPieces(8, "9", 2, color, 2))); // Scout has rank 2
             piecesList.addAll(Arrays.asList(createPieces(1, "S", 1, color, 7))); // Spy has rank 1
             piecesList.addAll(Arrays.asList(createPieces(1, "F", -1, color, 999))); // Flag is not ranked
-
+            piecesList.addAll(Arrays.asList(createPieces(1, "W", -1, color, 0)));
 
 
 
@@ -97,6 +97,19 @@ public class Board {
                     }
                 }
             }
+           for (int i=4; i<6; i++){
+               for(int j=2; j<4; j++){
+                   Piece p=new Piece("W", -1, "Blue");
+                   board[i][j]=p;
+               }
+           }
+            for (int i=4; i<6; i++){
+                for(int j=6; j<8; j++){
+                    Piece p=new Piece("W", -1, "Blue");
+                    board[i][j]=p;
+                }
+            }
+
         }
     }
 

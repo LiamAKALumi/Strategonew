@@ -57,6 +57,7 @@ public class GameView extends Application {
                 String buttonId = "cell" + i + j;
                 buttons[i][j] = (Button) scene.lookup("#" + buttonId);
             }
+
         }
     }
 
@@ -78,7 +79,11 @@ public class GameView extends Application {
             for (int y = 0; y < NUM_CELLS; y++) {
                 Piece piece = board[x][y];
                 if (piece != null) {
-                    if (piece.getColor().equals("Red")) {
+                    if (piece.getType().equals("W")){
+                        buttons[x][y].setStyle("-fx-background-color: #3ea4f0;"); // Red
+                        buttons[x][y].setText("");
+                    }
+                    else if (piece.getColor().equals("Red")) {
                         buttons[x][y].setStyle("-fx-background-color: #ff0000;"); // Red
                         buttons[x][y].setText("");
                     } else if (piece.getColor().equals("Blue")) {

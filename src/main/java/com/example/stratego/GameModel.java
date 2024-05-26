@@ -39,13 +39,14 @@ public class GameModel {
             // Move the piece from its source to its destination
             if (board.getPiece(move.getDestX(), move.getDestY()) != null) {
                 // this means that there was an attack
-
+                System.out.println("the "+board.getPiece(move.getSourceX(), move.getSourceY()).getColor()+" "+board.getPiece(move.getSourceX(), move.getSourceY()).getType()+" has attacked the " + board.getPiece(move.getDestX(), move.getDestY()).getColor()+" "+board.getPiece(move.getDestX(), move.getDestY()).getType()+"!");
                 if(!getInteractionResult(move)){
                     // this means that there was either a loss for the attacker or a tie
                     // in either scenario, there's no need to update the position of the piece itself, because it'll no longer be on the board
 
                     if(board.getPiece(move.getDestX(), move.getDestY()).getRank()==board.getPiece(move.getSourceX(), move.getSourceY()).getRank()){
                         // if true, this means the outcome was a tie
+                        System.out.println("the attack resulted a tie!");
 
                         // update the pieces Arraylists
                         if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getDestX(), move.getDestY()))){
@@ -62,27 +63,32 @@ public class GameModel {
                         }
 
                         board.setPiece(move.getDestX(), move.getDestY(), null);
-                    }
-                    // this means the outcome was a loss for the attacker
-                    board.getPiece(move.getDestX(), move.getDestY()).setRevealed(true);
-
-
-                    // update the pieces Arraylists
-                    if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getSourceX(), move.getSourceY()))){
-                        getFullBoard().getComputerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
-                        // update the knownPieces Arraylist
-                        if(!getFullBoard().getKnownPieces().contains(board.getPiece(move.getDestX(), move.getDestY()))){
-                            getFullBoard().getKnownPieces().add(board.getPiece(move.getDestX(), move.getDestY()));
-                        }
+                        board.setPiece(move.getSourceX(), move.getSourceY(), null);
                     }
                     else{
-                        getFullBoard().getPlayerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
-                        getFullBoard().getKnownPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                        // this means the outcome was a loss for the attacker
+                        System.out.println("the attack resulted a loss! for the attacker");
+                        board.getPiece(move.getDestX(), move.getDestY()).setRevealed(true);
+
+
+                        // update the pieces Arraylists
+                        if(getFullBoard().getComputerPieces().contains(board.getPiece(move.getSourceX(), move.getSourceY()))){
+                            getFullBoard().getComputerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                            // update the knownPieces Arraylist
+                            if(!getFullBoard().getKnownPieces().contains(board.getPiece(move.getDestX(), move.getDestY()))){
+                                getFullBoard().getKnownPieces().add(board.getPiece(move.getDestX(), move.getDestY()));
+                            }
+                        }
+                        else{
+                            getFullBoard().getPlayerPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                            getFullBoard().getKnownPieces().remove(board.getPiece(move.getSourceX(), move.getSourceY()));
+                        }
+                        board.setPiece(move.getSourceX(), move.getSourceY(), null);
                     }
-                    board.setPiece(move.getSourceX(), move.getSourceY(), null);
                 }
                 else{
                     // this means that the attack was successful
+                    System.out.println("the attack resulted a win for the attacker!");
 
                     // check -whether a move is a winning move
                     //  check if dest is FLAG
@@ -134,7 +140,12 @@ public class GameModel {
         if(board.getPiece(x, y)==null) {
             return false;
         }
+        // check if not moving opposing pieces
         if(board.getPiece(x, y).getColor().equals("Red")){
+            return false;
+        }
+        // check if a piece is a water tile
+        if(board.getPiece(x,y).getType().equals("W")){
             return false;
         }
         // check if a move is done with a piece that can't move
@@ -149,7 +160,12 @@ public class GameModel {
         if(board.getPiece(x, y)==null) {
             return false;
         }
+        // check if not moving opposing pieces
         if(board.getPiece(x, y).getColor().equals("Blue")){
+            return false;
+        }
+        // check if a piece is a water tile
+        if(board.getPiece(x,y).getType().equals("W")){
             return false;
         }
         // check if a move is done with a piece that can't move
@@ -226,8 +242,16 @@ public class GameModel {
         if(move.getDestX()>=10||move.getDestX()<0||move.getDestY()>=10||move.getDestY()<0){
             return false;
         }
+        // check if the piece is really a piece
+        if(board.getPiece(move.getSourceX(), move.getSourceY())==null){
+            return false;
+        }
         // check if the moving piece can move
         if(board.getPiece(move.getSourceX(), move.getSourceY()).getRank()==-1){
+            return false;
+        }
+        // check if the piece is not moving to a water tile
+        if(board.getPiece(move.getDestX(), move.getDestY())!=null&&board.getPiece(move.getDestX(), move.getDestY()).getType().equals("W")){
             return false;
         }
         // check if the piece is going to an unoccupied square
