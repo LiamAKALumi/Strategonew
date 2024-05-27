@@ -386,8 +386,17 @@ public class AIPlayer {
                             if (model.getBoard()[m.getDestX()][m.getDestY()].isRevealed()) {
                                 score += 2 * p.getRank();
                             } else {
+                                int b=0;
+                                for(Piece enemyPiece:model.getFullBoard().getPlayerPieces()){
+                                    if(enemyPiece.getType().equals("B")){
+                                        b+=1;
+                                    }
+                                }
                                 if (p.getType().equals("8")) {
-                                    score += turnCount * 0.1;
+                                    score += turnCount * 0.02 * b;
+                                }
+                                else{
+                                    score += turnCount *(7-b)*0.02;
                                 }
                             }
                         }
@@ -453,8 +462,17 @@ public class AIPlayer {
                             if (model.getBoard()[m.getDestX()][m.getDestY()].isRevealed()) {
                                 score += 2 * p.getRank();
                             } else {
+                                int b=0;
+                                for(Piece enemyPiece:model.getFullBoard().getPlayerPieces()){
+                                    if(enemyPiece.getType().equals("B")){
+                                        b+=1;
+                                    }
+                                }
                                 if (p.getType().equals("8")) {
-                                    score += turnCount * 0.1;
+                                    score += turnCount * 0.02 * b;
+                                }
+                                else{
+                                    score += turnCount *(7-b)*0.02;
                                 }
                             }
                         }
@@ -520,8 +538,17 @@ public class AIPlayer {
                             if (model.getBoard()[m.getDestX()][m.getDestY()].isRevealed()) {
                                 score += 2 * p.getRank();
                             } else {
+                                int b=0;
+                                for(Piece enemyPiece:model.getFullBoard().getPlayerPieces()){
+                                    if(enemyPiece.getType().equals("B")){
+                                        b+=1;
+                                    }
+                                }
                                 if (p.getType().equals("8")) {
-                                    score += turnCount * 0.1;
+                                    score += turnCount * 0.02 * b;
+                                }
+                                else{
+                                    score += turnCount *(7-b)*0.02;
                                 }
                             }
                         }
@@ -732,7 +759,7 @@ public class AIPlayer {
         }
 
 
-        if(model.getFullBoard().getKnownPieces().size() < 6)
+        if(model.getFullBoard().getKnownPieces().size() < 6&& turnCount<25)
         {
             turnCount++;
             return openingStage();
